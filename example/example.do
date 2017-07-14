@@ -47,4 +47,5 @@ foreach year of local years {
 }
 
 // save combined file
+// SH: is this step working for you? It crashes for me.
 save `"`output'/census"', replace
