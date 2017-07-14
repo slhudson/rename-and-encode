@@ -1,38 +1,34 @@
-
-** short example of renamefrom and encodefrom **
-
-
 // preamble
 clear all 
 set more off
 
 // directories
-local root 			"/Users/slhudson/Documents/MIT/Programming/Excel"
-local input 		"`root'/example/input"
-local output 		"`root'/example/output"
-local variables 	"`input'/variables.xlsx"
-local codes 		"`input'/codes.xlsx"
+local root 		"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
+local input 	"`root'/example/input"
+local output 	"`root'/example/output"
+local variables "`input'/variables.xlsx"
+local codes 	"`input'/codes.xlsx"
 
 // parameters
-local years			1990 2000
+local years		1990 2000
 
 ***************************************************
 
 // set ado directory
-sysdir set PERSONAL `root'
+sysdir set PERSONAL `"`root'"'
 
 // loop over years
 foreach year of local years {
 
 	// load raw data
-	insheet using "`input'/CENSUS`year'.csv", comma clear
+	insheet using `"`input'/CENSUS`year'.csv"', comma clear
 
 	// rename variables
-	renamefrom using `variables', filetype(excel) sheet(census) name_new(variable) ///
+	renamefrom using `"`variables'"', filetype(excel) sheet(census) name_new(variable) ///
 		name_old(census_`year') label(label) caseignore
 
 	// encode area key
-	encodefrom areakey using `codes', filetype(excel) sheet(tract) raw(areakey) clean(code) label(label)
+	encodefrom areakey using `"`codes'"', filetype(excel) sheet(tract) raw(areakey) clean(code) label(label)
 	
 	// flag year
 	gen year = `year'
@@ -51,4 +47,4 @@ foreach year of local years {
 }
 
 // save combined file
-save "`output'/census", replace
+save `"`output'/census"', replace

@@ -41,14 +41,14 @@ program define renamefrom, nclass
 	
 	// get variable names
 	if "`filetype'" == "excel" {
-		import excel  `using', sheet(`sheet') firstrow clear
+		import excel `"`using'"', sheet(`sheet') firstrow clear
 	}
 	else if "`filetype'" == "delimited" {
-		import delimited  `using', delimiters("`delimiters'") ///
+		import delimited `"`using'"', delimiters("`delimiters'") ///
 									varnames(1) case(preserve) clear
 	}
 	else if "`filetype'" == "stata" {
-		use `using', clear
+		use `"`using'"', clear
 	}
 	else {
 		display as error "`filetype' is not a valid filetype"
