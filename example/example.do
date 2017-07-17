@@ -48,5 +48,4 @@ merge 1:1 state using `crime', nogen
 order state
 
 // save combined file
-// SH: is this step working for you? It crashes for me.
 save `"`output'/crime"', replace
