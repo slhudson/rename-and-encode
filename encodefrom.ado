@@ -17,7 +17,7 @@ program define encodefrom, nclass
 	di "encoding `varlist' from `using'..."
 	
 	// declare temporary variables
-	tempvar merge code N
+	tempvar merge code labels N
 	
 	// declare error codes
 	local syntaxError 198
@@ -77,7 +77,7 @@ program define encodefrom, nclass
 				gen ``v'' = `raw'
 			}
 		}
-	
+		
 	//  determine if potential values are string or numeric
 	cap confirm numeric variable `raw'
 	local type_string_pot = _rc
@@ -94,9 +94,13 @@ program define encodefrom, nclass
 	qui drop if missing(`raw')
 	qui duplicates drop
 	
-	// save matched codes data set	
-	rename  `raw' `varlist' 
+	// rename variables to tempvars
 	gen `code' = `clean'
+	gen `labels' = `label'
+	drop `clean' `label'
+	
+	// save matched codes data set
+	rename  `raw' `varlist'
 	tempfile codes
 	qui save `codes'
 	
@@ -105,21 +109,21 @@ program define encodefrom, nclass
 	*** DEFINE MAPPING FROM CLEAN VALUES TO LABELS ***
 
 	// verify that only one label is supplied for each clean code value	
-	bysort `clean' `label': keep if (_n == 1)
-	bysort `clean': gen `N' = _N	
+	bysort `code' `labels': keep if (_n == 1)
+	bysort `code': gen `N' = _N	
 	cap assert (`N' == 1)
 	if _rc { 
 		display as error "The following code values are assigned to more than one label"
-		list `clean' `label' if (`N' > 1)
+		list `code' `labels' if (`N' > 1)
 		exit _rc
 	}
 
 	// define label: this is a PITA (plug in the answer) method to store a local for each value label
-	qui levelsof `clean', local(codes_clean) 
+	qui levelsof `code', local(codes_clean)
 	foreach x of local codes_clean {
 		forvalues i = 1/`=_N'{
-			if `clean'[`i'] == `x' {
-				local label_`x' = `label'[`i']
+			if `code'[`i'] == `x' {
+				local label_`x' = `labels'[`i']
 				break
 			}
 		}
@@ -131,7 +135,6 @@ program define encodefrom, nclass
 	
 	// restore master data
 	restore
-
 	
 	// make raw values string if potential values are strings
 	if `type_string_raw' | `type_string_pot' {
@@ -160,13 +163,13 @@ program define encodefrom, nclass
 		tab `varlist' if missing(`code')
 		exit _rc
 	}
-	
+
 	// replace raw values with clean values
 	local lbl: var label `varlist'
 	drop `varlist'
 	generate `varlist' = `code'
 	label var `varlist' "`lbl'"
-	
+
 	// label values
 	cap label drop `varlist'
 	local i = 1
