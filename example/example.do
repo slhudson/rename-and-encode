@@ -9,43 +9,44 @@ local output 	"`root'/example/output"
 local variables "`input'/variables.xlsx"
 local codes 	"`input'/codes.xlsx"
 
-// parameters
-local years		1990 2000
 
 ***************************************************
 
 // set ado directory
 sysdir set PERSONAL `"`root'"'
 
-// loop over years
-foreach year of local years {
+// crime data
 
 	// load raw data
-	insheet using `"`input'/CENSUS`year'.csv"', comma clear
+	import delimited using `"`input'/crime_rates.csv"', clear
 
 	// rename variables
-	renamefrom using `"`variables'"', filetype(excel) sheet(census) name_new(variable) ///
-		name_old(census_`year') label(label) caseignore
+	renamefrom using `"`variables'"', filetype(excel) sheet(crime) name_new(variable) ///
+		name_old(crime_rates) label(label) caseignore
+		
+	// encode state with FIPS code
+	encodefrom state using `"`codes'"', filetype(excel) sheet(state) raw(state_name) clean(code) label(state_name)
 
-	// encode area key
-	encodefrom areakey using `"`codes'"', filetype(excel) sheet(tract) raw(areakey) clean(code) label(label)
-	
-	// flag year
-	gen year = `year'
-	
 	// save clean file
-	tempfile census`year'
-	save `census`year''
+	tempfile crime
+	save `crime'
 	
-} // end of year loop
+// census data
 
+	// load raw data
+	sysuse census, clear
+	
+	// use state abbreviation
+	drop state
+	rename state2 state
+	
+	// encode state with FIPS code
+	encodefrom state using `"`codes'"', filetype(excel) sheet(state) raw(abbreviation) clean(code) label(state_name)
 
-// append year-specific files
-clear
-foreach year of local years {
-	append using `census`year''
-}
+// merge files
+merge 1:1 state using `crime', nogen
+order state
 
 // save combined file
 // SH: is this step working for you? It crashes for me.
-save `"`output'/census"', replace
+save `"`output'/crime"', replace
