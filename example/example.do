@@ -2,7 +2,7 @@
 clear all 
 set more off
 
-// directories
+// directories and file names
 local root 		"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
 local input 	"`root'/example/input"
 local output 	"`root'/example/output"
@@ -65,3 +65,5 @@ sort state year
 
 // save combined file
 save `"`output'/population_age10"', replace
+
+***************************************************
