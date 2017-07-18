@@ -1,0 +1,6 @@
+variable,label,pop80s,pop11
+age10,Number of people aged 10,pop,cen42010sex0_age10
+age10_m,Number of males aged 10,popm,cen42010sex1_age10
+age10_f,Number of females aged 10,popf,cen42010sex2_age10
+year,Year,year,year
+state,State,state,geodisplaylabel

@@ -6,46 +6,62 @@ set more off
 local root 		"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
 local input 	"`root'/example/input"
 local output 	"`root'/example/output"
-local variables "`input'/variables.xlsx"
+local variables "`input'/variables.csv"
 local codes 	"`input'/codes.xlsx"
 
+// file locations
+local pop80s	http://www.nber.org/data/census-intercensal-population/pop80s.dta
+local pop11		http://www.nber.org/data/census-intercensal-population/2011/pepsyasex2011.dta
+local files		pop80s pop11
+
+// format of state variables
+local state_pop80s 	abbreviation
+local state_pop11	name
 
 ***************************************************
 
 // set ado directory
 sysdir set PERSONAL `"`root'"'
 
-// crime data
+foreach file of local files {
 
-	// load raw data
-	import delimited using `"`input'/crime_rates.csv"', clear
-
-	// rename variables
-	renamefrom using `"`variables'"', filetype(excel) sheet(crime) name_new(variable) ///
-		name_old(crime_rates) label(label) caseignore
+	// load raw data from internet
+	use ``file'', clear
+	
+	// clean individual files
 		
-	// encode state with FIPS code
-	encodefrom state using `"`codes'"', filetype(excel) sheet(state) raw(state_name) clean(code) label(state_name)
-
+		// only keep age 10 population estimates
+		if "`file'" == "pop80s" {
+			keep if age==10
+		}
+		// flag 2011 as the year in pop11 dataset
+		else {
+			gen year = 2011
+		}
+		
+	// rename variables
+	renamefrom using `"`variables'"', filetype(delimited) name_new(variable) ///
+		name_old(`file') label(label) dropx caseignore
+	
+	// encode state with FIPS code	
+	encodefrom state using `"`codes'"', filetype(excel) sheet(state) raw(`state_`file'') ///
+		clean(FIPS_code) label(name) allow_missing
+		
 	// save clean file
-	tempfile crime
-	save `crime'
-	
-// census data
+	tempfile temp_`file'
+	save `temp_`file''
 
-	// load raw data
-	sysuse census, clear
-	
-	// use state abbreviation
-	drop state
-	rename state2 state
-	
-	// encode state with FIPS code
-	encodefrom state using `"`codes'"', filetype(excel) sheet(state) raw(abbreviation) clean(code) label(state_name)
+}
 
-// merge files
-merge 1:1 state using `crime', nogen
-order state
+// append files
+clear
+foreach file of local files {
+	append using `temp_`file''
+}
+
+// organize data by state and year
+order state year
+sort state year
 
 // save combined file
-save `"`output'/crime"', replace
+save `"`output'/population_age10"', replace
