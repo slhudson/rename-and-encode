@@ -76,7 +76,7 @@ program define renamefrom, nclass
 		bysort ``name'': gen `N' = _N
 		cap assert (`N' == 1)
 		if _rc {
-			display as error `"function call was "renamefrom `varlist' `0'"'  //"
+			display as error `"The function call was "renamefrom `0'" "'  //"
 			display as error "The `name' column contains duplicate variable names.  Please specify a 1:1 mapping from old names to new names."
 			list ``name'' if (`N' > 1)
 			exit _rc
@@ -121,7 +121,7 @@ program define renamefrom, nclass
 	}
 		// print missing variables
 		if "`missing_list'" != "" & "`dropx'" == ""  {
-			display as error `"function call was "`0'"'  //"
+			display as error `"The function call was "renamefrom `0'" "'  //"
 			display as error "The name_old column contains the following variables not found in the master dataset."
 			display ""
 			display "`missing_list'"

@@ -69,7 +69,7 @@ program define encodefrom, nclass
 	}
 	
 	keep `clean' `raw' `label'
-	
+
 		// allow for raw and (label or clean) to be same spreadsheet column
 		foreach v in label clean { 
 			if "``v''" == "`raw'" {
@@ -93,7 +93,7 @@ program define encodefrom, nclass
 	}
 	qui drop if missing(`raw')
 	qui duplicates drop
-	
+
 	// rename variables to tempvars
 	gen `code' = `clean'
 	gen `labels' = `label'
@@ -150,7 +150,7 @@ program define encodefrom, nclass
 	// verify that all raw values could be found in the provided spreadsheet
 	cap assert (`merge' != 1 | missing(`varlist'))
 	if _rc {
-		display as error "Function call was encodefrom `0' "
+		display as error `"The function call was "encodefrom `0'" "'
 		display as error "The following values for `varlist' were not found in the supporting spreadsheet:"
 		tab `varlist' if (`merge' == 1)
 		exit _rc
