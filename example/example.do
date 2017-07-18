@@ -40,12 +40,15 @@ foreach file of local files {
 		}
 		
 	// rename variables
-	renamefrom using `"`variables'"', filetype(delimited) name_new(variable) ///
-		name_old(`file') label(label) dropx caseignore
+	renamefrom using `"`variables'"', filetype(delimited) 				/// SH: Can we add a sheet name to this one as well to mirror the other syntax?
+		name_new(variable) name_old(`file') label(label) dropx caseignore  
+		
 	
 	// encode state with FIPS code	
-	encodefrom state using `"`codes'"', filetype(excel) sheet(state) raw(`state_`file'') ///
-		clean(FIPS_code) label(name) allow_missing
+	// SH: Do we currently have an option that lets users control the name of the variable *label*? Right now I think it defaults to the name of 
+	// the variable itself.  Can we add that feature?
+	encodefrom state using `"`codes'"', filetype(excel) sheet(state) 	/// SH: Perhaps we should make the syntax "raw" and "clean" for both commands...
+		raw(`state_`file'') clean(FIPS_code) label(name) allow_missing
 		
 	// save clean file
 	tempfile temp_`file'
