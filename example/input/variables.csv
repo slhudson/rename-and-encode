@@ -1,6 +1,0 @@
-variable,label,pop80s,pop11
-pop_age10,"total population, age 10",pop,cen42010sex0_age10
-pop_age10_male,"male population, age 10",popm,cen42010sex1_age10
-pop_age10_female,"female population, age 10",popf,cen42010sex2_age10
-year,year,year,year
-state,state,state,geodisplaylabel
