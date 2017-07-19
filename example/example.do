@@ -3,14 +3,14 @@ clear all
 set more off
 
 // directories and file names
-local root 		"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
+local root 	"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
 local input 	"`root'/example/input"
 local output 	"`root'/example/output"
-local variables "`input'/variables.csv"
+local variables "`input'/variables.xlsx"
 local codes 	"`input'/codes.xlsx"
 
 // file locations
-local pop80s	http://www.nber.org/data/census-intercensal-population/pop80s.dta
+local pop80s		http://www.nber.org/data/census-intercensal-population/pop80s.dta
 local pop11		http://www.nber.org/data/census-intercensal-population/2011/pepsyasex2011.dta
 local files		pop80s pop11
 
@@ -40,15 +40,12 @@ foreach file of local files {
 		}
 		
 	// rename variables
-	renamefrom using `"`variables'"', filetype(delimited) 				/// SH: Can we add a sheet name to this one as well to mirror the other syntax?
-		name_new(variable) name_old(`file') label(label) dropx caseignore  
-		
+	renamefrom using `"`variables'"', filetype(excel) sheet(population) ///
+		raw(`file') clean(variable) label(label) dropx caseignore  
 	
 	// encode state with FIPS code	
-	// SH: Do we currently have an option that lets users control the name of the variable *label*? Right now I think it defaults to the name of 
-	// the variable itself.  Can we add that feature?
-	encodefrom state using `"`codes'"', filetype(excel) sheet(state) 	/// SH: Perhaps we should make the syntax "raw" and "clean" for both commands...
-		raw(`state_`file'') clean(FIPS_code) label(name) allow_missing
+	encodefrom state using `"`codes'"', filetype(excel) sheet(state) ///
+		raw(`state_`file'') clean(FIPS_code) label(name) label_name(state) allow_missing
 		
 	// save clean file
 	tempfile temp_`file'

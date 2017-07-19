@@ -10,8 +10,8 @@ capture program drop encodefrom
 
 program define encodefrom, nclass
 	syntax varname using/, 	filetype(string) raw(string) clean(string) label(string) ///
-							[delimiters(string)] [sheet(string)]					///
-							[noallow_missing] [CASEignore]			///
+							[delimiters(string)] [sheet(string)]  ///
+							[label_name(string)] [noallow_missing] [CASEignore]
 
 	
 	di "encoding `varlist' from `using'..."
@@ -77,7 +77,12 @@ program define encodefrom, nclass
 				gen ``v'' = `raw'
 			}
 		}
-		
+
+	// if no label name specified, default to variable name
+	if "`label_name'" == "" {
+		local label_name `varlist'
+	}
+
 	//  determine if potential values are string or numeric
 	cap confirm numeric variable `raw'
 	local type_string_pot = _rc
@@ -171,12 +176,12 @@ program define encodefrom, nclass
 	label var `varlist' "`lbl'"
 
 	// label values
-	cap label drop `varlist'
+	cap label drop `label_name'
 	local i = 1
 	foreach x of local codes_clean {
-		label define `varlist' `x' "`label_`x''", modify	
+		label define `label_name' `x' "`label_`x''", modify
 	}	
-	label values `varlist' `varlist'
+	label values `varlist' `label_name'
 	drop `merge' `code' 
 	
 	// tab new codes

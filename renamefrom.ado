@@ -4,7 +4,7 @@
 capture program drop renamefrom
 
 program define renamefrom, nclass
-	syntax using/, filetype(string) name_old(string) name_new(string) ///
+	syntax using/, filetype(string) raw(string) clean(string) ///
 		[delimiters(string)] [sheet(string)]	///
 		[if(string)]			///
 		[label(string)]  		///
@@ -55,7 +55,7 @@ program define renamefrom, nclass
 		exit `syntaxError'
 	}
 	
-	quietly keep if !missing(`name_old') & !missing(`name_new')
+	quietly keep if !missing(`raw') & !missing(`clean')
 	
 	// restrict based on "if" option
 	if `"`if'"' != "" {  //"
@@ -64,14 +64,14 @@ program define renamefrom, nclass
 	
 	// if caseignore option, rename all "old" vars to lowercase
 	// keep a copy of "old" variables with original capitalization if needed later for variable labels
-	tempvar name_old_preserved
-	gen `name_old_preserved' = `name_old'
+	tempvar raw_preserved
+	gen `raw_preserved' = `raw'
 	if "`caseignore'" == "caseignore" {
-		replace `name_old' = lower(`name_old')
+		replace `raw' = lower(`raw')
 	}
 	
 	// verify that old and new variable names are unique
-	foreach name in name_old name_new {
+	foreach name in raw clean {
 		tempvar N
 		bysort ``name'': gen `N' = _N
 		cap assert (`N' == 1)
@@ -86,9 +86,9 @@ program define renamefrom, nclass
 	// store the variable names and labels as locals
 	local n_vars = _N
 	forvalues i = 1/`n_vars' {
-		local new_`i' = `name_new'[`i']
-		local old_`i' = `name_old'[`i']
-		local old_preserved_`i' = `name_old_preserved'[`i']
+		local new_`i' = `clean'[`i']
+		local old_`i' = `raw'[`i']
+		local old_preserved_`i' = `raw_preserved'[`i']
 		
 		if "`label'" != "" {
 			local label_`i' = `label'[`i']
@@ -122,7 +122,7 @@ program define renamefrom, nclass
 		// print missing variables
 		if "`missing_list'" != "" & "`dropx'" == ""  {
 			display as error `"The function call was "renamefrom `0'" "'  //"
-			display as error "The name_old column contains the following variables not found in the master dataset."
+			display as error "The raw column contains the following variables not found in the master dataset."
 			display ""
 			display "`missing_list'"
 			exit `otherError'
