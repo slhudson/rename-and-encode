@@ -42,6 +42,7 @@ specified in an external spreadsheet
 {synopt:{opt label(string)}}specifies column with value labels{p_end}
 {synopt:{opt delimiters(chars)}}use {it:chars} as delimiters; by default, tabs or commas{p_end}
 {synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
+{synopt:{opt label_name(string)}}chooses the name of the value label; defaults to varname{p_end}
 {synopt:{opt allow_missing}}allows "clean" to include missing values {p_end}
 {synopt:{opt caseignore}}ignores capitalization when matching variables with 
 variable names in the name_old column{p_end}
@@ -98,6 +99,9 @@ commas.
 {opt sheet(string)} specifies sheet within {it:using} excel document.
 This option cannot be used for other file types and must be specified if {it:using} is
 an excel document.
+
+{phang}
+{opt label_name(string)} chooses the name of the value label of {varname} once it is encoded. If no name is specified for the value label, the default is to use the name of the variable as the name of the value label. 
 
 {phang}
 {opt noallow_missing} does not allow a "clean" value that is associated with

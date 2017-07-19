@@ -27,7 +27,7 @@
 {p 8 17 2}
 {cmdab:renamefrom}
 {cmd:using} {it: filename}
-{cmd:,} {opt name_old(string)} {opt name_new(string)} {opt filetype(excel|delimited|stata)} 
+{cmd:,} {opt filetype(string)} {opt raw(string)} {opt clean(string)}
 [{it:options}]
 
 
@@ -38,8 +38,8 @@
 
 
 {synopt:{opt filetype(excel|delimited|stata)}}file type of external file with new variable names{p_end}
-{synopt:{opt name_old(string)}}specifies column of old variables to be renamed{p_end}
-{synopt:{opt name_new(string)}}specifies column of new variable names to be used{p_end}
+{synopt:{opt raw(string)}}specifies column of old variables to be renamed{p_end}
+{synopt:{opt clean(string)}}specifies column of new variable names to be used{p_end}
 {synopt:{opt delimiters(chars)}}use {it:chars} as delimiters; by default, tabs or commas{p_end}
 {synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
 {synopt:{opt if(exp)}}restrict renaming of variables based on {it:exp}{p_end}
@@ -48,7 +48,7 @@
 {synopt:{opt dropx}}drops variables not specified in external file{p_end}
 {synopt:{opt keeplabel}}keeps old variable label if no label is specified in external file{p_end}
 {synopt:{opt namelabel}}makes old variable name the label if no label is specified in external file{p_end}
-{synopt:{opt caseignore}}ignores capitalization when matching variables with variable names in the name_old column{p_end}
+{synopt:{opt caseignore}}ignores capitalization when matching variables with variable names in the raw column{p_end}
 {synoptline}
 
 
@@ -75,12 +75,12 @@ have comma-separated values, and {bf:.txt} files are tab-separated. The {it:stat
 option is for Stata-format datasets with the {bf:.dta} extension. 
 
 {phang}
-{opt name_old(string)} specifies the column containing the old variables to be renamed. 
+{opt raw(string)} specifies the column containing the old variables to be renamed. 
 If there are variables in source data that are not specified in external spreadsheet, you must 
 use either option {opt dropx} or {opt keepx}.
 
 {phang}
-{opt name_new(string)} specifies column of new variable names to be used.
+{opt clean(string)} specifies column of new variable names to be used.
 
 {phang}
 {opt delimiters(chars)} chooses the delimiter used to separate the values of an
@@ -106,11 +106,11 @@ This expression can involve values within the external spreadsheet.
  is modified by the options namelabel and keeplabel. 
 
 {phang}
-{opt keepx} requests that any variables not specified by the name_old
+{opt keepx} requests that any variables not specified by the raw
  column are left unchanged.
 
 {phang}
-{opt dropx} drops variables not specified in the name_old column.
+{opt dropx} drops variables not specified in the raw column.
 
 {phang}
 {opt keeplabel} preserves the old variable label if a new label is not specified
@@ -124,7 +124,7 @@ specified {it:and} the variable did not have an old label.
  
 {phang}
 {opt caseignore} ignores capitalization when matching variables with variable 
-names in the name_old column.
+names in the raw column.
 
 
 {marker rem}{...}
