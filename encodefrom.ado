@@ -1,6 +1,4 @@
-// We'll work on the preamble at the very end.
-// Purpose: This program maps raw values to clean, labeled integers using a crosswalk 
-// provided in the using data or an external spreadsheet.
+// This program maps raw values to clean, labeled integers using an external crosswalk.
 
 **************************************************************************************
 **************************************************************************************

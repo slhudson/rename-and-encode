@@ -3,14 +3,14 @@ clear all
 set more off
 
 // directories and file names
-local root 	"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
+local root 		"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
 local input 	"`root'/example/input"
 local output 	"`root'/example/output"
 local variables "`input'/variables.xlsx"
 local codes 	"`input'/codes.xlsx"
 
 // file locations
-local pop80s		http://www.nber.org/data/census-intercensal-population/pop80s.dta
+local pop80s	http://www.nber.org/data/census-intercensal-population/pop80s.dta
 local pop11		http://www.nber.org/data/census-intercensal-population/2011/pepsyasex2011.dta
 local files		pop80s pop11
 
@@ -23,6 +23,7 @@ local state_pop11	name
 // set ado directory
 sysdir set PERSONAL `"`root'"'
 
+// loop over raw data sets 
 foreach file of local files {
 
 	// load raw data from internet

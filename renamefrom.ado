@@ -1,5 +1,4 @@
-// We'll work on the preamble once we finalize the code.
-// Purpose: This program renames and labels variables using an external spreadsheet.
+// This program renames and labels variables using an external data sets.
 
 capture program drop renamefrom
 
