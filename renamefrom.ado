@@ -1,5 +1,5 @@
 // We'll work on the preamble once we finalize the code.
-// Purpose: This program renames and labels variables using an external Excel spreadsheet.
+// Purpose: This program renames and labels variables using an external spreadsheet.
 
 capture program drop renamefrom
 
@@ -12,6 +12,8 @@ program define renamefrom, nclass
 		[keeplabel] [namelabel] ///
 		[CASEignore] ///
 
+	version 8.0
+
 	// declare error codes
 	local syntaxError 198
 	local otherError  102
@@ -23,6 +25,10 @@ program define renamefrom, nclass
 	
 	// preserve the existing data
 	preserve
+	
+	**************************************************************************************
+	
+	*** DEFINE MAPPING FROM RAW TO CLEAN VARIABLE NAMES ***
 		
 	// sheet can be specified if and only if using excel
 	// delimiters can be specified if and only if using delimited file
@@ -96,7 +102,11 @@ program define renamefrom, nclass
 		
 	}
 	
-	// restore the working data
+	**************************************************************************************
+	
+	*** RENAME VARIABLES ***
+	
+	// restore the master data
 	restore
 	
 	//if caseignore option on, convert var to lower
@@ -202,4 +212,7 @@ program define renamefrom, nclass
 	}
 
 end	
-	
+
+**************************************************************************************
+**************************************************************************************
+**************************************************************************************

@@ -10,10 +10,12 @@ capture program drop encodefrom
 
 program define encodefrom, nclass
 	syntax varname using/, 	filetype(string) raw(string) clean(string) label(string) ///
-							[delimiters(string)] [sheet(string)]  ///
-							[label_name(string)] [noallow_missing] [CASEignore]
+		[delimiters(string)] [sheet(string)]  ///
+		[label_name(string)] ///
+		[noallow_missing] [CASEignore]
 
-	
+	version 8.0
+
 	di "encoding `varlist' from `using'..."
 	
 	// declare temporary variables
@@ -23,14 +25,15 @@ program define encodefrom, nclass
 	local syntaxError 198
 	
 	// display process comment
-	di ""
-	di "encoding `varlist' from `using'... "
-	di ""
+	display ""
+	display "encoding `varlist' from `using'... "
+	display ""
 	
 	// determine if varlist is string or number
 	cap confirm numeric variable `varlist' 
 	local type_string_raw = _rc
 	
+	// preserve the existing data
 	preserve
 	
 	**************************************************************************************
