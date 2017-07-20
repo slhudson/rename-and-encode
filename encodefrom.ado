@@ -70,7 +70,7 @@ program define encodefrom, nclass
 	}
 	
 	keep `clean' `raw' `label'
-
+	
 		// allow for raw and (label or clean) to be same spreadsheet column
 		foreach v in label clean { 
 			if "``v''" == "`raw'" {
@@ -87,7 +87,7 @@ program define encodefrom, nclass
 	//  determine if potential values are string or numeric
 	cap confirm numeric variable `raw'
 	local type_string_pot = _rc
-	
+
 	// make `raw' string or not depending on `varlist' format, and reduce to 
 	// unique combinations of raw, clean, and label values 
 	if `type_string_raw' | `type_string_pot'  {
@@ -104,9 +104,10 @@ program define encodefrom, nclass
 	gen `code' = `clean'
 	gen `labels' = `label'
 	drop `clean' `label'
-	
+
 	// save matched codes data set
-	rename  `raw' `varlist'
+	cap rename  `raw' `varlist'
+
 	tempfile codes
 	qui save `codes'
 	
@@ -124,6 +125,7 @@ program define encodefrom, nclass
 		exit _rc
 	}
 
+	
 	// define label: this is a PITA (plug in the answer) method to store a local for each value label
 	qui levelsof `code', local(codes_clean)
 	foreach x of local codes_clean {
@@ -141,7 +143,7 @@ program define encodefrom, nclass
 	
 	// restore master data
 	restore
-	
+
 	// make raw values string if potential values are strings
 	if `type_string_raw' | `type_string_pot' {
 		qui tostring `varlist', replace usedisplayformat
