@@ -106,7 +106,9 @@ program define encodefrom, nclass
 	drop `clean' `label'
 
 	// save matched codes data set
-	cap rename  `raw' `varlist'
+	if "`raw'" != "`varlist'" {
+		cap rename  `raw' `varlist'	
+	}
 
 	tempfile codes
 	qui save `codes'

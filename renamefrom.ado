@@ -117,7 +117,9 @@ program define renamefrom, nclass
 		
 		foreach var of varlist _all {	
 			local lower = lower("`var'")
-			cap qui rename `var' `lower'
+			if "`var'" != "`lower'" {
+				qui rename `var' `lower'
+			}
 		}
 	}
 	
@@ -148,7 +150,9 @@ program define renamefrom, nclass
 	foreach v of varlist _all {
 		if `i' <= `n_vars' {
 			tempvar `new_`i''
-			cap qui rename `v' ``new_`i'''
+			if "`v'" != "``new_`i'''" {
+				qui rename `v' ``new_`i'''
+			}
 		}
 		else {
 			if "`dropx'" == "dropx" {
@@ -167,7 +171,9 @@ program define renamefrom, nclass
 	local i = 1
 	foreach v of varlist _all {
 		if `i' <= `n_vars' {
-			cap qui rename  ``new_`i''' `new_`i''
+			if "``new_`i'''" != "`new_`i''" {
+				qui rename  ``new_`i''' `new_`i''
+			}
 			local ++i
 		}
 	}
@@ -179,12 +185,14 @@ program define renamefrom, nclass
 
 				if lower("`old_var'") == "`extra_var'" {
 					local extras_cap `extras_cap' `old_var'
+					if "`old_var'" != "`extra_var'" {
+						rename `extra_var' `old_var'					
+					}
 					break
 				}
 				
 			} 
 		}
-		cap qui rename (`extras') (`extras_cap')
 	}
 	
 	// label variables 
