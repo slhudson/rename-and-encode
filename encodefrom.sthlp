@@ -40,7 +40,7 @@ specified in an external spreadsheet
 {synopt:{opt raw(string)}}specifies columns with values to be encoded {p_end}
 {synopt:{opt clean(string)}}specifies columns with clean values (e.g. 1, 2, 3, ...) {p_end}
 {synopt:{opt label(string)}}specifies column with value labels{p_end}
-{synopt:{opt delimiters(chars)}}use {it:chars} as delimiters; by default, tabs or commas{p_end}
+{synopt:{opt delimiters("chars")}}use {it:chars} as delimiters; by default, "\t" or "," {p_end}
 {synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
 {synopt:{opt label_name(string)}}chooses the name of the value label; defaults to varname{p_end}
 {synopt:{opt allow_missing}}allows "clean" to include missing values {p_end}
@@ -88,10 +88,10 @@ associated with non-missing "raw" values, the option "noallow_missing" must be s
 {opt label(string)} specifies the column in {it:using} that contains the value labels.
 
 {phang}
-{opt delimiters(chars)} chooses the delimiter used to separate the values of an
+{opt delimiters("chars")} chooses the delimiter used to separate the values of an
 external delimited file. Can only be used with the delimited filetype option. For
-example, to specify commas, tabs, and whitespace as delimiters, type {opt delimiters(,)},
-{opt delimiters(\t)}, and {opt delimiters{whitespace)}, respectively. If no
+example, to specify commas, tabs, and whitespace as delimiters, type {opt delimiters(",")},
+{opt delimiters("\t")}, and {opt delimiters{"whitespace")}, respectively. If no
 delimiter is chosen, Stata will by default check if the file is delimited by tabs or
 commas. 
 
