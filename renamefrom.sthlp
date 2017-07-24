@@ -40,7 +40,7 @@
 {synopt:{opt filetype(excel|delimited|stata)}}file type of external file with new variable names{p_end}
 {synopt:{opt raw(string)}}specifies column of old variables to be renamed{p_end}
 {synopt:{opt clean(string)}}specifies column of new variable names to be used{p_end}
-{synopt:{opt delimiters(chars)}}use {it:chars} as delimiters; by default, tabs or commas{p_end}
+{synopt:{opt delimiters("chars")}}use {it:chars} as delimiters; by default, "\t" or "," {p_end}
 {synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
 {synopt:{opt if(exp)}}restrict renaming of variables based on {it:exp}{p_end}
 {synopt:{opt label(string)}}specifies column with new labels{p_end}
@@ -83,10 +83,10 @@ use either option {opt dropx} or {opt keepx}.
 {opt clean(string)} specifies column of new variable names to be used.
 
 {phang}
-{opt delimiters(chars)} chooses the delimiter used to separate the values of an
+{opt delimiters("chars")} chooses the delimiter used to separate the values of an
 external delimited file. Can only be used with the delimited filetype option. For
-example, to specify commas, tabs, and whitespace as delimiters, type {opt delimiters(,)},
-{opt delimiters(\t)}, and {opt delimiters{whitespace)}, respectively. If no
+example, to specify commas, tabs, and whitespace as delimiters, type {opt delimiters(",")},
+{opt delimiters("\t")}, and {opt delimiters{"whitespace")}, respectively. If no
 delimiter is chosen, Stata will by default check if the file is delimited by tabs or
 commas. 
 
