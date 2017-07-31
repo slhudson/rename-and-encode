@@ -11,7 +11,7 @@
 {title:Title}
 
 {phang}
-{bf:renamefrom} {hline 2} rename and label variables using an external file
+{bf:renamefrom} {hline 2} Names and labels variables using values stored in an external crosswalk.
 
 {title:Table of contents}
 
@@ -34,21 +34,27 @@
 {synoptset 20 tabbed}{...}
 {synopthdr}
 {synoptline}
+
 {syntab:Main}
+{synopt:{opt raw(string)}}column in external crosswalk that specifies existing variable names in memory{p_end}
+{synopt:{opt clean(string)}}column in external crosswalk that specifies clean variable names{p_end}
+{synopt:{opt label(string)}}column in external crosswalk that specifies clean variable labels{p_end}
 
+{syntab:Crosswalk}
+{synopt:{opt filetype(excel|delimited|stata)}}file type of external crosswalk{p_end}
+{synopt:{opt sheet(string)}}sheet name if the external crosswalk is an Excel workbook{p_end}
+{synopt:{opt delimiters("chars")}}{it:chars} used as delimiters in the external crosswalk; by default, "\t" or "," {p_end}
 
-{synopt:{opt filetype(excel|delimited|stata)}}file type of external file with new variable names{p_end}
-{synopt:{opt raw(string)}}specifies column of old variables to be renamed{p_end}
-{synopt:{opt clean(string)}}specifies column of new variable names to be used{p_end}
-{synopt:{opt delimiters("chars")}}use {it:chars} as delimiters; by default, "\t" or "," {p_end}
-{synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
-{synopt:{opt if(`"exp"')}}restrict renaming of variables based on {it:exp}{p_end}
-{synopt:{opt label(string)}}specifies column with new labels{p_end}
-{synopt:{opt keepx}}keeps variables not specified in external file; overrided by dropx{p_end}
-{synopt:{opt dropx}}drops variables not specified in external file{p_end}
-{synopt:{opt keeplabel}}keeps old variable label if no label is specified in external file{p_end}
-{synopt:{opt namelabel}}makes old variable name the label if no label is specified in external file{p_end}
-{synopt:{opt caseignore}}ignores capitalization when matching variables with variable names in the raw column{p_end}
+{syntab:Missing Values}
+{synopt:{opt keepx}}keeps variables in the master data if no match in the external crosswalk is found{p_end}
+{synopt:{opt dropx}}drops variables in the master data if no match in the external crosswalk is found{p_end}
+{synopt:{opt keeplabel}}keeps variable label in the master data if no label is specified in the external crosswalk{p_end}
+{synopt:{opt keeplabel}}labels variables with variable names if no label is specified in the external crosswalk{p_end}
+
+{syntab:Other}
+{synopt:{opt if(`"exp"')}}restricts renaming to a subset of values in the external crosswalk{p_end}
+{synopt:{opt caseignore}}ignores capitalization when matching variables with raw names{p_end}
+
 {synoptline}
 
 
@@ -57,30 +63,29 @@
 {title:Description}
 
 {pstd}
-{cmd:renamefrom} renames and relabels variables in memory according to the external spreadsheet specified by {it:using}.
+{cmd:renamefrom} names and labels the variables in memory using values stored in an external crosswalk.  Storing the mapping from raw names to clean names in a crosswalk helps users align names across data sets and spot discrepancies between files.
 
 
 {marker opt}{...}
 {title:Options}
+// SH: Can you reorganize these to match the columns I had above?
 
 {dlgtab:Main}
 
 {phang}
 {opt filetype(excel|delimited|stata)} specifies the file type
-of the external spreadsheet that lists the old and new variable names. 
+of the external crosswalk that contains the raw and clean variable names. 
 The {it:excel} option is for Excel workbooks with file extensions {bf:.xls}
-and {bf:.xlsx}. The {it:delimited} option is for text files with one observation
-per line and values separated by some delimiter. For instance, {bf:.csv} files
-have comma-separated values, and {bf:.txt} files are tab-separated. The {it:stata}
+and {bf:.xlsx}. The {it:delimited} option supports .csv and other character-delimited text files. The {it:stata}
 option is for Stata-format datasets with the {bf:.dta} extension. 
 
 {phang}
-{opt raw(string)} specifies the column containing the old variables to be renamed. 
-If there are variables in source data that are not specified in external spreadsheet, you must 
-use either option {opt dropx} or {opt keepx}.
+{opt raw(string)} specifies the column that contains the names of variables in memory. 
+If there are variables in memory that are not included in the external crosswalk, the user must 
+specify either the {opt dropx} or {opt keepx} option.
 
 {phang}
-{opt clean(string)} specifies column of new variable names to be used.
+{opt clean(string)} specifies the column that contains clean variable names.
 
 {phang}
 {opt delimiters("chars")} chooses the delimiter used to separate the values of an
@@ -127,33 +132,22 @@ specified {it:and} the variable did not have an old label.
 {opt caseignore} ignores capitalization when matching variables with variable 
 names in the raw column.
 
-
-{marker rem}{...}
-{title:Remarks}
-
-{pstd}
-This code is still in beta stage.  If you encounter any bugs or have suggestions for 
-improvement, please feel free to contact the developers.  If you want to take a stab at 
-implementing an improvement, let us know -- the code is hosted on github, and we're happy to share!
-
-
 {marker exa}{...}
 {title:Examples}
 
-Rename variables in memory from the {it:population} worksheet of the excel 
-file {it:variables.xlsx}.
-The {it:old_name}, {it:new_name}, and {it:label} columns of {it:population} contains
-the old variable names, new variable names, and labels, respectively. 
-
-{phang}{cmd:. renamefrom using variables.xlsx, filetype(excel) sheet(population) raw(old_name) clean(new_name) label(label)}{p_end}
-
-Rename from a CSV file.
+{phang}{cmd:. renamefrom using variables.xlsx, filetype(excel) raw(old_name) clean(new_name) label(label)}{p_end}
 {phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label)}{p_end}
 
-Drop the variables not specified in the external spreadsheet.
-{phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label) dropx}{p_end}
+{title:Author}
 
-Suppose the external spreadsheet contains an extra column {it:switch}, and we only
-want to rename the variables in the rows where {it:switch} equals 1:
-{phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label) if(`"switch==1"')}{p_end}
+{phang}Sally Hudson{p_end}
+{phang}E-mail: sally.hudson@virginia.edu{p_end}
+{phang}GitHub: https://github.com/slhudson{p_end}
+
+{title:Remarks}
+
+{pstd}
+SH: Can you figure out what I'm doing wrong with this paragraph?  It's not quite formatting right...
+{phang}This program was developed through work at the School Effectiveness and Inequality Initative at MIT. Thanks are due to the many SEII research assistants who used and refined it over the years, especially Tyler Hoppenfeld, Sookyo Jeong, and Alicia Weng. If you encounter any bugs or have suggestions for additional features, please feel free to submit a pull request on GitHub.{p_end}
+
 
