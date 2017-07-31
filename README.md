@@ -1,19 +1,18 @@
-renamefrom and encodefrom: Rename and encode variables using an external spreadsheet
+renamefrom and encodefrom: Rename and encode variables using an external crosswalk
 --------------------------------
 
-binscatter is a Stata program which generates binned scatterplots.  These are a convenient way of observing the relationship between two variables, or visualizing OLS regressions.  They are especially useful when working with large datasets.
+These are particularly useful for resolving discrepancies across data sets before merging or appending the data sets. 
 
-renamefrom is a Stata program which renames and labels variables using values specified in an external spreadsheet. Also using an external spreadsheet, encodefrom encodes a variable with values and value labels. 
+`renamefrom` is a Stata program which renames and labels variables using values stored in an external crosswalk. It can sort out inconsistencies in variable names across data sets. `encodefrom` encodes variables with values and value labels stored in an external crosswalk. It can help align data sets that use different codes for the same values of a given variable. 
+
+They take crosswalks in the form of Excel workbooks (.xlsx), character-delimited files (such as .csv), and Stata-format datasets (.dta). 
 
 ### Installation ###
-Open Stata and install renamefrom and encodefrom from the SSC repository by running the commands
-	ssc install renamefrom
-and
-	ssc install encodefrom
+Open Stata and install the programs from the SSC repository by running the commands
+```
+ssc install renamefrom
+ssc install encodefrom
+```
 
-After installing the files, you can read the documentation by running 
-	help renamefrom
-and
-	help encodefrom
-
+After installing the files, you can read the documentation by running `help renamefrom` and `help encodefrom` in Stata. 
 
