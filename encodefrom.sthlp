@@ -6,46 +6,56 @@
 {viewerjumpto "Syntax" "encodefrom##syn"}{...}
 {viewerjumpto "Description" "encodefrom##des"}{...}
 {viewerjumpto "Options" "encodefrom##opt"}{...}
-{viewerjumpto "Remarks" "encodefrom##rem"}{...}
 {viewerjumpto "Examples" "encodefrom##exa"}{...}
+{viewerjumpto "Author" "encodefrom##auth"}{...}
+{viewerjumpto "Remarks" "encodefrom##rem"}{...}
 {title:Title}
 
 {phang}
 {bf:encodefrom} {hline 2} Encode variable with values and value labels
-specified in an external spreadsheet
+specified in an external crosswalk.
 
 {title:Table of contents}
 
 	{help encodefrom##syn:Syntax}
 	{help encodefrom##des:Description}
 	{help encodefrom##opt:Options}
-	{help encodefrom##rem:Remarks}
 	{help encodefrom##exa:Examples}
+	{help encodefrom##auth:Author}
+	{help encodefrom##rem:Remarks}
 
 {marker syn}{...}
 {title:Syntax}
 
 {p 8 17 2}
-{cmdab:encodefrom} {varname} {cmd:using} {it:filename}
+{cmdab:encodefrom} {help varname} {cmd:using} {help filename}
 {cmd:,} {opt filetype(string)} {opt raw(string)} {opt clean(string)} {opt label(string)}
 [{it:options}]
 
 {synoptset 20 tabbed}{...}
 {synopthdr}
 {synoptline}
+
 {syntab:Main}
 
-{synopt:{opt filetype(excel|delimited|stata)}}file type of external file with 
- new variable values and value labels{p_end}
-{synopt:{opt raw(string)}}specifies columns with values to be encoded {p_end}
-{synopt:{opt clean(string)}}specifies columns with clean values (e.g. 1, 2, 3, ...) {p_end}
-{synopt:{opt label(string)}}specifies column with value labels{p_end}
-{synopt:{opt delimiters("chars")}}use {it:chars} as delimiters; by default, "\t" or "," {p_end}
-{synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
-{synopt:{opt label_name(string)}}chooses the name of the value label; defaults to varname{p_end}
-{synopt:{opt allow_missing}}allows "clean" to include missing values {p_end}
-{synopt:{opt caseignore}}ignores capitalization when matching variables with 
-variable names in the name_old column{p_end}
+{synopt:{opt raw(string)}}column in external crosswalk that contains values of {it:varname} to be encoded{p_end}
+{synopt:{opt clean(string)}}column in external crosswalk that contains clean values (e.g. 1, 2, 3, ...) of {it:varname} {p_end}
+{synopt:{opt label(string)}}column in external crosswalk that contains clean value labels{p_end}
+
+{syntab:Crosswalk}
+
+{synopt:{opt filetype(excel|delimited|stata)}}file type of external crosswalk{p_end}
+{synopt:{opt sheet(string)}}sheet name if the external crosswalk is an Excel workbook{p_end}
+{synopt:{opt delimiters("chars")}}{it:chars} used as delimiters in the external crosswalk;
+by default, "\t" or "," {p_end}
+
+{syntab:Other}
+
+{synopt:{opt label_name(string)}}name of value label; defaults to {it:varname}{p_end}
+{synopt:{opt noallow_missing}}prohibits {opt clean} column in external crosswalk to have missing values{p_end}
+{synopt:{opt caseignore}}ignores capitalization when matching values of {it:varname} with
+{opt raw} values in external crosswalk{p_end}
+
 {synoptline}
 
 
@@ -54,9 +64,10 @@ variable names in the name_old column{p_end}
 {title:Description}
 
 {pstd}
-{cmd:encodefrom} encodes the variable specified by {it:varname} with the labels 
-and values specified in {it:using}.
-
+{cmd:encodefrom} encodes {it:varname} using the values and value labels stored in an
+external crosswalk. Storing the mapping from raw values to clean values in a crosswalk
+helps users align a variable across data sets that use different codes for the
+same values. 
 
 
 {marker opt}{...}
@@ -65,67 +76,73 @@ and values specified in {it:using}.
 {dlgtab:Main}
 
 {phang}
+{opt raw(string)} specifies the column that contains the current values of {it:varname}. 
+
+{phang}
+{opt clean(string)} specifies the column that contains clean values of {it:varname}.
+This will often be populated with sequential ascending integers (e.g. 1, 2, 3, 4...).
+By default, this column can include missing values. To refuse {it:using} files with missing {opt clean}
+values associated with non-missing {opt raw} values, the option {opt noallow_missing} must be specified.
+
+{phang}
+{opt label(string)} specifies the column that contains clean value labels.
+
+{dlgtab:Crosswalk}
+
+{phang}
 {opt filetype(excel|delimited|stata)} specifies the file type
-of the external spreadsheet that lists the old and new variable names. 
+of the external crosswalk that contains the raw and clean values of {it:varname}. 
 The {it:excel} option is for Excel workbooks with file extensions {bf:.xls}
-and {bf:.xlsx}. The {it:delimited} option is for text files with one observation
-per line and values separated by some delimiter. For instance, {bf:.csv} files
-have comma-separated values, and {bf:.txt} files are tab-separated. The {it:stata}
-option is for Stata-format datasets with the {bf:.dta} extension. 
+and {bf:.xlsx}. The {it:delimited} option supports {bf:.csv} and other character-delimited
+text files. The {it:stata} option is for Stata-format datasets with the {bf:.dta} extension.
 
 {phang}
-{opt raw(string)} specifies the column in the external file {it:using} that contains the old 
-values of the variable specified by {it:varname}
+{opt sheet(string)} specifies a sheet name for the crosswalk in an Excel workbook.
+This option can only be used with {opt filetype(excel)}. Following {help import excel},
+the program defaults to using the workbook's first sheet if no sheet is specified.
 
 {phang}
-{opt clean(string)} specifies the column in {it:using} that will be used as the 
-underlying levels after encoding is complete.  This will often be populated with 
-sequential ascending integers (e.g. 1, 2, 3, 4...). By default, this column can
-include missing values. To refuse {it:using} files with missing "clean" values 
-associated with non-missing "raw" values, the option "noallow_missing" must be specified.
+{opt delimiters("chars")} specifies the delimiter that separates values in the external
+crosswalk. This option can only be used with the delimited filetype option. For {bf:.csv} crosswalks
+the syntax is {opt delimiters(",")}. For tab-delimited crosswalks the syntax is {opt delimiters("\t")},
+and for whitespace-delimited text it is {opt delimiters("whitespace")}. Following {help import delimited},
+if no delimiter is specified, Stata will check if the file is delimited by tabs or commas by default.
+
+{dlgtab:Other}
 
 {phang}
-{opt label(string)} specifies the column in {it:using} that contains the value labels.
+{opt label_name(string)} specifies the value label name of {it:varname}. If no name is 
+specified for the value label, the default is to use the variable name as the 
+value label name.
 
 {phang}
-{opt delimiters("chars")} chooses the delimiter used to separate the values of an
-external delimited file. Can only be used with the delimited filetype option. For
-example, to specify commas, tabs, and whitespace as delimiters, type {opt delimiters(",")},
-{opt delimiters("\t")}, and {opt delimiters{"whitespace")}, respectively. If no
-delimiter is chosen, Stata will by default check if the file is delimited by tabs or
-commas. 
+{opt noallow_missing} prohibits a non-missing {opt clean} value to be associated
+with a missing {opt raw} value in the crosswalk. 
 
 {phang}
-{opt sheet(string)} specifies sheet within {it:using} excel document.
-This option cannot be used for other file types and must be specified if {it:using} is
-an excel document.
-
-{phang}
-{opt label_name(string)} chooses the name of the value label of {varname} once it is encoded. If no name is specified for the value label, the default is to use the name of the variable as the name of the value label. 
-
-{phang}
-{opt noallow_missing} does not allow a "clean" value that is associated with
-a non-missing "raw" value to be missing. 
-
-{phang}
-{opt caseignore} ignores capitalization when matching original {varname} values 
-with "raw" {it:varname} values in the raw column.
-
-{marker rem}{...}
-{title:Remarks}
-
-{pstd}
-This code is still in beta stage.  If you encounter any bugs or have suggestions for 
-improvement, please feel free to contact the developers.  If you want to take a stab at 
-implementing an improvement, let us know -- the code is hosted on github, and we're happy to share!
-
-
-BREAK. EVERYTHING AFTER THIS IS FROM TEMPLATE
+{opt caseignore} ignores capitalization when matching {it:varname} values 
+with {opt raw} values in the crosswalk.
 
 
 {marker exa}{...}
 {title:Examples}
 
-{phang}{cmd:. whatever mpg weight}{p_end}
+{phang}{cmd:. encodefrom var1 using codes.xlsx, filetype(excel) raw(old_values) clean(new_values) label(label)}{p_end}
+{phang}{cmd:. encodefrom var1 using codes.csv, filetype(delimited) delimiters(",") raw(old_values) clean(new_values) label(label)}{p_end}
 
-{phang}{cmd:. whatever mpg weight, meanonly}{p_end}
+{marker auth}{...}
+{title:Author}
+
+{phang}Sally Hudson{p_end}
+{phang}E-mail: sally.hudson@virginia.edu{p_end}
+{phang}GitHub: https://github.com/slhudson{p_end}
+
+{marker rem}{...}
+{title:Remarks}
+
+{pstd}
+This program was developed through work at the School Effectiveness and 
+Inequality Initative at MIT. Thanks are due to the many SEII research 
+assistants who used and refined it over the years, especially Tyler Hoppenfeld,
+Sookyo Jeong, and Alicia Weng. If you encounter any bugs or have suggestions 
+for additional features, please feel free to submit a pull request on GitHub.

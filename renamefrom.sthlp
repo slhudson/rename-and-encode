@@ -6,8 +6,9 @@
 {viewerjumpto "Syntax" "renamefrom##syn"}{...}
 {viewerjumpto "Description" "renamefrom##des"}{...}
 {viewerjumpto "Options" "renamefrom##opt"}{...}
-{viewerjumpto "Remarks" "renamefrom##rem"}{...}
 {viewerjumpto "Examples" "renamefrom##exa"}{...}
+{viewerjumpto "Author" "renamefrom##auth"}{...}
+{viewerjumpto "Remarks" "renamefrom##rem"}{...}
 {title:Title}
 
 {phang}
@@ -18,15 +19,17 @@
 	{help renamefrom##syn:Syntax}
 	{help renamefrom##des:Description}
 	{help renamefrom##opt:Options}
-	{help renamefrom##rem:Remarks}
 	{help renamefrom##exa:Examples}
+	{help renamefrom##auth:Author}
+	{help renamefrom##rem:Remarks}
+
 	
 {marker syn}{...}
 {title:Syntax}
 
 {p 8 17 2}
 {cmdab:renamefrom}
-{cmd:using} {it: filename}
+{cmd:using} {help filename}
 {cmd:,} {opt filetype(string)} {opt raw(string)} {opt clean(string)}
 [{it:options}]
 
@@ -36,23 +39,27 @@
 {synoptline}
 
 {syntab:Main}
+
 {synopt:{opt raw(string)}}column in external crosswalk that contains existing variable names in memory{p_end}
 {synopt:{opt clean(string)}}column in external crosswalk that contains clean variable names{p_end}
 {synopt:{opt label(string)}}column in external crosswalk that contains clean variable labels{p_end}
 
 {syntab:Crosswalk}
+
 {synopt:{opt filetype(excel|delimited|stata)}}file type of external crosswalk{p_end}
 {synopt:{opt sheet(string)}}sheet name if the external crosswalk is an Excel workbook{p_end}
 {synopt:{opt delimiters("chars")}}{it:chars} used as delimiters in the external crosswalk; by default, "\t" or "," {p_end}
 
 {syntab:Missing Values}
+
 {synopt:{opt keepx}}keeps variables in the master data if no match in the external crosswalk is found{p_end}
 {synopt:{opt dropx}}drops variables in the master data if no match in the external crosswalk is found{p_end}
 {synopt:{opt keeplabel}}keeps variable label in the master data if no label is specified in the external crosswalk{p_end}
-{synopt:{opt keeplabel}}labels variables with variable names if no label is specified in the external crosswalk{p_end}
+{synopt:{opt namelabel}}labels variables with variable names if no label is specified in the external crosswalk{p_end}
 
 {syntab:Other}
-{synopt:{opt if(`"exp"')}}restricts renaming to a subset of values in the external crosswalk{p_end}
+
+{synopt:{opt if(exp)}}restricts renaming to a subset of values in the external crosswalk{p_end}
 {synopt:{opt caseignore}}ignores capitalization when matching variables with raw names{p_end}
 
 {synoptline}
@@ -68,16 +75,8 @@
 
 {marker opt}{...}
 {title:Options}
-// SH: Can you reorganize these to match the columns I had above?
 
 {dlgtab:Main}
-
-{phang}
-{opt filetype(excel|delimited|stata)} specifies the file type
-of the external crosswalk that contains the raw and clean variable names. 
-The {it:excel} option is for Excel workbooks with file extensions {bf:.xls}
-and {bf:.xlsx}. The {it:delimited} option supports .csv and other character-delimited text files. The {it:stata}
-option is for Stata-format datasets with the {bf:.dta} extension. 
 
 {phang}
 {opt raw(string)} specifies the column that contains the names of variables in memory. 
@@ -88,33 +87,55 @@ specify either the {opt dropx} or {opt keepx} option.
 {opt clean(string)} specifies the column that contains clean variable names.
 
 {phang}
-{opt delimiters("chars")} specifies the delimiter that separates values in the 
-external crosswalk. This option can only be used with the delimited filetype option. For .csv crosswalks
-the syntax is {opt delimiters(",")}.  For tab-delimited crosswalks the syntax is {opt delimiters("\t")}, and {opt delimiters{"whitespace")}. If no
-delimiter is specified, Stata will check if the file is comma or tab-delimited by default.
+{opt label(string)} specifies the column that contains clean variable labels. If no label
+is specified for a given variable, the default behavior is to not label that variable. 
+The options {opt namelabel} and {opt keeplabel} provide alternatives.
+ 
+{dlgtab:Crosswalk}
 
 {phang}
-{opt sheet(string)} specifies a sheet name for the crosswalk in an Excel workbook.  This option can only be used with {opt filetype(excel)}.  
-Following {import excel}, the program defaults to using the workbook's first sheet if no sheet is specified.
+{opt filetype(excel|delimited|stata)} specifies the file type
+of the external crosswalk that contains the raw and clean variable names. 
+The {it:excel} option is for Excel workbooks with file extensions {bf:.xls}
+and {bf:.xlsx}. The {it:delimited} option supports {bf:.csv} and other 
+character-delimited text files. The {it:stata} option is for Stata-format
+datasets with the {bf:.dta} extension. 
 
 {phang}
-{opt if(`"exp"')} restricts renaming of variables based on the expression {it:exp}. 
-The expression can involve values within the external spreadsheet, in which case 
-it needs to enclosed by the compound double quotes `" "'. 
+{opt sheet(string)} specifies a sheet name for the crosswalk in an Excel workbook. 
+This option can only be used with {opt filetype(excel)}. Following {help import excel}, the
+program defaults to using the workbook's first sheet if no sheet is specified.
 
 {phang}
-{opt label(string)} specifies the column that contains clean variable labels. If no label is specified for a given
- variable, the default behavior is to not label that variable. The options {opt namelabel} and {opt keeplabel} provide alternatives.. 
+{opt delimiters("chars")} specifies the delimiter that separates values in the external crosswalk. 
+This option can only be used with the delimited filetype option. For {bf:.csv} crosswalks
+the syntax is {opt delimiters(",")}. For tab-delimited crosswalks the syntax is {opt delimiters("\t")},
+and for whitespace-delimited text it is {opt delimiters{"whitespace")}. Following {help import delimited},
+if no delimiter is specified, Stata will check if the file is delimited by tabs or commas by default. 
+
+{dlgtab:Missing Values}
 
 {phang}
-The {opt keepx} and {opt dropx} options determine how the program handles variables in memory that are not found in the {opt raw} column of the crosswalk.
+The {opt keepx} and {opt dropx} options determine how the program handles variables
+in memory that are not found in the {opt raw} column of the crosswalk.
 
 {phang}
-{opt keeplabel} preserves the raw variable label if a clean label is not provided. {opt namelabel} applies the raw variable name if a clean label is not provided. If both options are specified, then namelabel will only label a variable with its raw name if no clean label was
-specified {it:and} the variable did not have a raw label.
+{opt keeplabel} preserves the raw variable label if a clean label is not provided. 
+{opt namelabel} applies the raw variable name as the label if a clean label is not provided.
+If both options are specified, then {opt namelabel} will only label a variable with
+its raw name if no clean label was specified {it:and} the variable did not have a
+raw label.
+ 
+{dlgtab:Other}
+
+{phang}
+{opt if(exp)} restricts renaming of variables based on the expression {it:exp}. 
+The expression can involve values within the external crosswalk.
  
 {phang}
-{opt caseignore} ignores capitalization when matching variables in memory with {opt raw} variables names in the crosswalk.
+{opt caseignore} ignores capitalization when matching variables in memory with {opt raw} variable 
+names in the crosswalk.
+
 
 {marker exa}{...}
 {title:Examples}
@@ -122,16 +143,20 @@ specified {it:and} the variable did not have a raw label.
 {phang}{cmd:. renamefrom using variables.xlsx, filetype(excel) raw(old_name) clean(new_name) label(label)}{p_end}
 {phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label)}{p_end}
 
+{marker auth}{...}
 {title:Author}
 
 {phang}Sally Hudson{p_end}
 {phang}E-mail: sally.hudson@virginia.edu{p_end}
 {phang}GitHub: https://github.com/slhudson{p_end}
 
+{marker rem}{...}
 {title:Remarks}
 
 {pstd}
-SH: Can you figure out what I'm doing wrong with this paragraph?  It's not quite formatting right...
-{phang}This program was developed through work at the School Effectiveness and Inequality Initative at MIT. Thanks are due to the many SEII research assistants who used and refined it over the years, especially Tyler Hoppenfeld, Sookyo Jeong, and Alicia Weng. If you encounter any bugs or have suggestions for additional features, please feel free to submit a pull request on GitHub.{p_end}
-
+This program was developed through work at the School Effectiveness and 
+Inequality Initative at MIT. Thanks are due to the many SEII research 
+assistants who used and refined it over the years, especially Tyler Hoppenfeld,
+Sookyo Jeong, and Alicia Weng. If you encounter any bugs or have suggestions 
+for additional features, please feel free to submit a pull request on GitHub.
 

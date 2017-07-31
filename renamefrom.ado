@@ -28,16 +28,12 @@ program define renamefrom, nclass
 	
 	*** DEFINE MAPPING FROM RAW TO CLEAN VARIABLE NAMES ***
 		
-	// sheet can be specified if and only if using excel
-	// delimiters can be specified if and only if using delimited file
+	// sheet can be specified only if using excel
+	// delimiters can be specified only if using delimited file
 	if ("`sheet'" != "") & ("`filetype'" != "excel") {
 		display as error "Cannot specify sheet unless using excel filetype"
 		exit `syntaxError'
 	} 
-	else if ("`sheet'" == "") & ("`filetype'" == "excel") {
-		display as error "Must specify sheet when using excel filetype"
-		exit `syntaxError'
-	}
 	if ("`delimiters'" != "") & ("`filetype'" != "delimited") {
 		display as error "Cannot specify delimiters unless using delimited filetype"
 		exit `syntaxError'

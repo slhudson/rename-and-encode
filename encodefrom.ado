@@ -42,10 +42,6 @@ program define encodefrom, nclass
 		display as error "Cannot specify sheet unless using excel filetype"
 		exit `syntaxError'
 	} 
-	else if ("`sheet'" == "") & ("`filetype'" == "excel") {
-		display as error "Must specify sheet when using excel filetype"
-		exit `syntaxError'
-	}
 	if ("`delimiters'" != "") & ("`filetype'" != "delimited") {
 		display as error "Cannot specify delimiters unless using delimited filetype"
 		exit `syntaxError'
