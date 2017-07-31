@@ -14,8 +14,6 @@ program define encodefrom, nclass
 
 	version 8.0
 
-	di "encoding `varlist' from `using'..."
-	
 	// declare temporary variables
 	tempvar merge code labels N
 	

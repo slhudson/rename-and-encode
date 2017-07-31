@@ -1,5 +1,5 @@
 // This program renames and labels variables using an external data sets.
-
+// SH: Should we be worried about missing values imported as "."?
 capture program drop renamefrom
 
 program define renamefrom, nclass
