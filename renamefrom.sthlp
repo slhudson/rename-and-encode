@@ -42,7 +42,7 @@
 {synopt:{opt clean(string)}}specifies column of new variable names to be used{p_end}
 {synopt:{opt delimiters("chars")}}use {it:chars} as delimiters; by default, "\t" or "," {p_end}
 {synopt:{opt sheet(string)}}specifies sheet within excel document using{p_end}
-{synopt:{opt if(exp)}}restrict renaming of variables based on {it:exp}{p_end}
+{synopt:{opt if(`"exp"')}}restrict renaming of variables based on {it:exp}{p_end}
 {synopt:{opt label(string)}}specifies column with new labels{p_end}
 {synopt:{opt keepx}}keeps variables not specified in external file; overrided by dropx{p_end}
 {synopt:{opt dropx}}drops variables not specified in external file{p_end}
@@ -97,8 +97,9 @@ The default behavior is to use the first sheet within the excel spreadsheet,
 following the default behavior of {import excel}
 
 {phang}
-{opt if(exp)} restricts renaming of variables based on the expression {it:exp}. 
-This expression can involve values within the external spreadsheet. 
+{opt if(`"exp"')} restricts renaming of variables based on the expression {it:exp}. 
+The expression can involve values within the external spreadsheet, in which case 
+it needs to enclosed by the compound double quotes `" "'. 
 
 {phang}
 {opt label(string)} specifies column with new labels. If no label is specified for a
@@ -135,12 +136,24 @@ This code is still in beta stage.  If you encounter any bugs or have suggestions
 improvement, please feel free to contact the developers.  If you want to take a stab at 
 implementing an improvement, let us know -- the code is hosted on github, and we're happy to share!
 
-BREAK----EVERYTHING AFTER THIS IS PART OF EXAMPLE FILE, NOT REAL HELP FILE
-
 
 {marker exa}{...}
 {title:Examples}
 
-{phang}{cmd:. whatever mpg weight}{p_end}
+Rename variables in memory from the {it:population} worksheet of the excel 
+file {it:variables.xlsx}.
+The {it:old_name}, {it:new_name}, and {it:label} columns of {it:population} contains
+the old variable names, new variable names, and labels, respectively. 
 
-{phang}{cmd:. whatever mpg weight, meanonly}{p_end}
+{phang}{cmd:. renamefrom using variables.xlsx, filetype(excel) sheet(population) raw(old_name) clean(new_name) label(label)}{p_end}
+
+Rename from a CSV file.
+{phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label)}{p_end}
+
+Drop the variables not specified in the external spreadsheet.
+{phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label) dropx}{p_end}
+
+Suppose the external spreadsheet contains an extra column {it:switch}, and we only
+want to rename the variables in the rows where {it:switch} equals 1:
+{phang}{cmd:. renamefrom using variables.csv, filetype(delimited) delimiters(",") raw(old_name) clean(new_name) label(label) if(`"switch==1"')}{p_end}
+
