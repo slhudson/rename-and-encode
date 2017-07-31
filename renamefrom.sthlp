@@ -36,9 +36,9 @@
 {synoptline}
 
 {syntab:Main}
-{synopt:{opt raw(string)}}column in external crosswalk that specifies existing variable names in memory{p_end}
-{synopt:{opt clean(string)}}column in external crosswalk that specifies clean variable names{p_end}
-{synopt:{opt label(string)}}column in external crosswalk that specifies clean variable labels{p_end}
+{synopt:{opt raw(string)}}column in external crosswalk that contains existing variable names in memory{p_end}
+{synopt:{opt clean(string)}}column in external crosswalk that contains clean variable names{p_end}
+{synopt:{opt label(string)}}column in external crosswalk that contains clean variable labels{p_end}
 
 {syntab:Crosswalk}
 {synopt:{opt filetype(excel|delimited|stata)}}file type of external crosswalk{p_end}
@@ -88,18 +88,14 @@ specify either the {opt dropx} or {opt keepx} option.
 {opt clean(string)} specifies the column that contains clean variable names.
 
 {phang}
-{opt delimiters("chars")} chooses the delimiter used to separate the values of an
-external delimited file. Can only be used with the delimited filetype option. For
-example, to specify commas, tabs, and whitespace as delimiters, type {opt delimiters(",")},
-{opt delimiters("\t")}, and {opt delimiters{"whitespace")}, respectively. If no
-delimiter is chosen, Stata will by default check if the file is delimited by tabs or
-commas. 
+{opt delimiters("chars")} specifies the delimiter that separates values in the 
+external crosswalk. This option can only be used with the delimited filetype option. For .csv crosswalks
+the syntax is {opt delimiters(",")}.  For tab-delimited crosswalks the syntax is {opt delimiters("\t")}, and {opt delimiters{"whitespace")}. If no
+delimiter is specified, Stata will check if the file is comma or tab-delimited by default.
 
 {phang}
-{opt sheet(string)} specifies which sheet within excel document to use,
-and can only be used with {opt filetype(excel)}.  
-The default behavior is to use the first sheet within the excel spreadsheet, 
-following the default behavior of {import excel}
+{opt sheet(string)} specifies a sheet name for the crosswalk in an Excel workbook.  This option can only be used with {opt filetype(excel)}.  
+Following {import excel}, the program defaults to using the workbook's first sheet if no sheet is specified.
 
 {phang}
 {opt if(`"exp"')} restricts renaming of variables based on the expression {it:exp}. 
@@ -107,30 +103,18 @@ The expression can involve values within the external spreadsheet, in which case
 it needs to enclosed by the compound double quotes `" "'. 
 
 {phang}
-{opt label(string)} specifies column with new labels. If no label is specified for a
- variable, the default behavior is to not have a label for the variable. This behavior
- is modified by the options namelabel and keeplabel. 
+{opt label(string)} specifies the column that contains clean variable labels. If no label is specified for a given
+ variable, the default behavior is to not label that variable. The options {opt namelabel} and {opt keeplabel} provide alternatives.. 
 
 {phang}
-{opt keepx} requests that any variables not specified by the raw
- column are left unchanged.
+The {opt keepx} and {opt dropx} options determine how the program handles variables in memory that are not found in the {opt raw} column of the crosswalk.
 
 {phang}
-{opt dropx} drops variables not specified in the raw column.
-
-{phang}
-{opt keeplabel} preserves the old variable label if a new label is not specified
-for the variable. 
-
-{phang}
-{opt namelabel} makes the old variable name the new variable label, if a new
-label is not specified for the variable. If {opt keeplabel} is also specified,
-then namelabel will only label a variable with its old name if no new label was
-specified {it:and} the variable did not have an old label.
+{opt keeplabel} preserves the raw variable label if a clean label is not provided. {opt namelabel} applies the raw variable name if a clean label is not provided. If both options are specified, then namelabel will only label a variable with its raw name if no clean label was
+specified {it:and} the variable did not have a raw label.
  
 {phang}
-{opt caseignore} ignores capitalization when matching variables with variable 
-names in the raw column.
+{opt caseignore} ignores capitalization when matching variables in memory with {opt raw} variables names in the crosswalk.
 
 {marker exa}{...}
 {title:Examples}
