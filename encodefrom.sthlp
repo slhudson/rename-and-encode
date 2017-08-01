@@ -39,7 +39,7 @@ specified in an external crosswalk.
 {syntab:Main}
 
 {synopt:{opt raw(string)}}column in external crosswalk that contains values of {it:varname} to be encoded{p_end}
-{synopt:{opt clean(string)}}column in external crosswalk that contains clean values (e.g. 1, 2, 3, ...) of {it:varname} {p_end}
+{synopt:{opt clean(string)}}column in external crosswalk that contains clean numeric values of {it:varname} {p_end}
 {synopt:{opt label(string)}}column in external crosswalk that contains clean value labels{p_end}
 
 {syntab:Crosswalk}
@@ -52,7 +52,7 @@ by default, "\t" or "," {p_end}
 {syntab:Other}
 
 {synopt:{opt label_name(string)}}name of value label; defaults to {it:varname}{p_end}
-{synopt:{opt noallow_missing}}prohibits {opt clean} column in external crosswalk to have missing values{p_end}
+{synopt:{opt noallow_missing}}prohibits mapping non-missing {opt raw} values to missing {opt clean} values{p_end}
 {synopt:{opt caseignore}}ignores capitalization when matching values of {it:varname} with
 {opt raw} values in external crosswalk{p_end}
 
@@ -64,10 +64,9 @@ by default, "\t" or "," {p_end}
 {title:Description}
 
 {pstd}
-{cmd:encodefrom} encodes {it:varname} using the values and value labels stored in an
+{cmd:encodefrom} encodes {it:varname} using the values and labels stored in an
 external crosswalk. Storing the mapping from raw values to clean values in a crosswalk
-helps users align a variable across data sets that use different codes for the
-same values. 
+helps users align codes across data sets. 
 
 
 {marker opt}{...}
@@ -76,52 +75,47 @@ same values.
 {dlgtab:Main}
 
 {phang}
-{opt raw(string)} specifies the column that contains the current values of {it:varname}. 
+{opt raw(string)} specifies the crosswalk column that contains the values of {it:varname} in memory. 
 
 {phang}
-{opt clean(string)} specifies the column that contains clean values of {it:varname}.
-This will often be populated with sequential ascending integers (e.g. 1, 2, 3, 4...).
-By default, this column can include missing values. To refuse {it:using} files with missing {opt clean}
-values associated with non-missing {opt raw} values, the option {opt noallow_missing} must be specified.
+{opt clean(string)} specifies the crosswalk column that contains clean numeric values of {it:varname}.
+By default, this column can include missing values. To refuse {it:using} files that map non-missing {opt raw} values to missing {opt clean} values, use the {opt noallow_missing} option.
 
 {phang}
-{opt label(string)} specifies the column that contains clean value labels.
+{opt label(string)} specifies the crosswalk column that contains clean value labels.
 
 {dlgtab:Crosswalk}
 
 {phang}
 {opt filetype(excel|delimited|stata)} specifies the file type
-of the external crosswalk that contains the raw and clean values of {it:varname}. 
+of the crosswalk. 
 The {it:excel} option is for Excel workbooks with file extensions {bf:.xls}
-and {bf:.xlsx}. The {it:delimited} option supports {bf:.csv} and other character-delimited
-text files. The {it:stata} option is for Stata-format datasets with the {bf:.dta} extension.
+and {bf:.xlsx}. The {it:delimited} option supports {bf:.csv} and other 
+character-delimited text files. The {it:stata} option is for Stata {bf:.dta} files. 
 
 {phang}
-{opt sheet(string)} specifies a sheet name for the crosswalk in an Excel workbook.
-This option can only be used with {opt filetype(excel)}. Following {help import excel},
-the program defaults to using the workbook's first sheet if no sheet is specified.
+{opt sheet(string)} specifies a sheet name for the crosswalk in an Excel workbook. 
+This option can only be used with {opt filetype(excel)}. In keeping with the syntax for {help import excel}, the
+program defaults to using the workbook's first sheet if no sheet is specified.
 
 {phang}
-{opt delimiters("chars")} specifies the delimiter that separates values in the external
-crosswalk. This option can only be used with the delimited filetype option. For {bf:.csv} crosswalks
-the syntax is {opt delimiters(",")}. For tab-delimited crosswalks the syntax is {opt delimiters("\t")},
-and for whitespace-delimited text it is {opt delimiters("whitespace")}. Following {help import delimited},
-if no delimiter is specified, Stata will check if the file is delimited by tabs or commas by default.
+{opt delimiters("chars")} specifies the delimiter that separates columns in the crosswalk. 
+This option can only be used with {opt filetype(delimited)}. For {bf:.csv} crosswalks
+the syntax is {opt delimiters(",")}. For tab-delimited crosswalks the syntax is {opt delimiters("\t")}. In keeping with the syntax for {help import delimited},
+if no delimiter is specified, Stata will check if the file is delimited by tabs or commas by default. 
 
 {dlgtab:Other}
 
 {phang}
-{opt label_name(string)} specifies the value label name of {it:varname}. If no name is 
-specified for the value label, the default is to use the variable name as the 
-value label name.
+{opt label_name(string)} specifies a name for the clean value label. If no name is 
+specified, the default label name is the variable name.
 
 {phang}
-{opt noallow_missing} prohibits a non-missing {opt clean} value to be associated
-with a missing {opt raw} value in the crosswalk. 
+{opt noallow_missing} prohibits mapping non-missing {opt raw} values to missing clean values.
 
 {phang}
-{opt caseignore} ignores capitalization when matching {it:varname} values 
-with {opt raw} values in the crosswalk.
+{opt caseignore} ignores capitalization when matching values of {it:varname} with
+{opt raw} values in external crosswalk.
 
 
 {marker exa}{...}
@@ -146,3 +140,4 @@ Inequality Initative at MIT. Thanks are due to the many SEII research
 assistants who used and refined it over the years, especially Tyler Hoppenfeld,
 Sookyo Jeong, and Alicia Weng. If you encounter any bugs or have suggestions 
 for additional features, please feel free to submit a pull request on GitHub.
+The GitHub repository also contains more examples of this program in use.
