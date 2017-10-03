@@ -44,8 +44,7 @@ program define renamefrom, nclass
 		import excel `"`using'"', sheet(`sheet') firstrow clear
 	}
 	else if "`filetype'" == "delimited" {
-		import delimited `"`using'"', delimiters("`delimiters'") ///
-									varnames(1) case(preserve) clear
+		insheet `"`using'"', delimiter("`delimiters'") names case clear
 	}
 	else if "`filetype'" == "stata" {
 		use `"`using'"', clear
