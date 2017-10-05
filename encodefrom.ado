@@ -29,7 +29,7 @@ program define encodefrom, nclass
 	cap confirm numeric variable `varlist' 
 	local type_string_raw = _rc
 	
-	// preserve the existing data
+	// preserve the existing data 
 	preserve
 	
 	**************************************************************************************
@@ -49,26 +49,27 @@ program define encodefrom, nclass
 	
 	// get code values matched to raw values 
 	if "`filetype'" == "excel" {
-		import excel `"`using'"', sheet(`sheet') firstrow clear
+		qui import excel `"`using'"', sheet(`sheet') firstrow clear
 	}
 	else if "`filetype'" == "delimited" {
-		insheet `"`using'"', delimiter("`delimiters'") names case clear
+		qui import delimited  `"`using'"', delimiters("`delimiters'") ///
+									varnames(1) case(preserve) clear
 	}
 	else if "`filetype'" == "stata" {
-		use `"`using'"', clear
+		qui use `"`using'"', clear
 	}
 	else {
 		display as error "`filetype' is not a valid filetype"
 		exit `syntaxError'
 	}
 	
-	keep `clean' `raw' `label'
+	qui keep `clean' `raw' `label'
 	
 		// allow for raw and (label or clean) to be same spreadsheet column
 		foreach v in label clean { 
 			if "``v''" == "`raw'" {
 				tempvar `v'
-				gen ``v'' = `raw'
+				qui gen ``v'' = `raw'
 			}
 		}
 
@@ -90,36 +91,20 @@ program define encodefrom, nclass
 			qui replace `raw' = lower(`raw')
 		}
 	}
-	qui drop if missing(`raw')
-	qui duplicates drop
 
 	// rename variables to tempvars
-	gen `code' = `clean'
-	gen `labels' = `label'
+	qui gen `code' = `clean'
+	qui gen `labels' = `label'
 	drop `clean' `label'
 
 	// save matched codes data set
 	if "`raw'" != "`varlist'" {
 		rename  `raw' `varlist'	
 	}
-
-	tempfile codes
-	qui save `codes'
 	
 	**************************************************************************************
 	
 	*** DEFINE MAPPING FROM CLEAN VALUES TO LABELS ***
-
-	// verify that only one label is supplied for each clean code value	
-	bysort `code' `labels': keep if (_n == 1)
-	bysort `code': gen `N' = _N	
-	cap assert (`N' == 1)
-	if _rc { 
-		display as error "The following code values are assigned to more than one label"
-		list `code' `labels' if (`N' > 1)
-		exit _rc
-	}
-
 	
 	// define label: this is a PITA (plug in the answer) method to store a local for each value label
 	qui levelsof `code', local(codes_clean)
@@ -132,8 +117,24 @@ program define encodefrom, nclass
 		}
 	}
 
-	**************************************************************************************
+	// save codes mapping
+	qui drop if missing(`varlist')
+	qui duplicates drop
+	tempfile codes
+	qui save `codes'
+
+	// verify that only one label is supplied for each clean code value	
+	qui bysort `code' `labels': keep if (_n == 1)
+	qui bysort `code': gen `N' = _N	
+	qui cap assert (`N' == 1)
+	if _rc { 
+		display as error "The following code values are assigned to more than one label"
+		list `code' `labels' if (`N' > 1)
+		exit _rc
+	}
 		
+	**************************************************************************************
+	
 	*** ENCODE AND LABEL VARIABLES ***
 	
 	// restore master data
@@ -144,23 +145,22 @@ program define encodefrom, nclass
 		qui tostring `varlist', replace usedisplayformat
 		if "`caseignore'" == "caseignore" {
 			qui replace `varlist' = lower(`varlist')
-			}
+		}
 	}
 
 	// merge with clean values
 	qui merge m:1 `varlist' using `codes', keep(master match) keepusing(`code') gen(`merge')
 
 	// verify that all raw values could be found in the provided spreadsheet
-	cap assert (`merge' != 1 | missing(`varlist'))
+	qui cap assert (`merge' != 1 | missing(`varlist'))
 	if _rc {
-		display as error `"The function call was "encodefrom `0'" "'
 		display as error "The following values for `varlist' were not found in the supporting spreadsheet:"
 		tab `varlist' if (`merge' == 1)
 		exit _rc
 	}	
 		
 	// verify that all raw values have found a non-missing clean value unless allow_missing is specified
-	cap assert !missing(`code') if !missing(`varlist')
+	qui cap assert !missing(`code') if !missing(`varlist')
 	if _rc & "`allow_missing'" == "noallow_missing" {
 		display as error "The following raw values for `varlist' must be mapped to non-missing clean values:" 
 		tab `varlist' if missing(`code')
@@ -170,7 +170,7 @@ program define encodefrom, nclass
 	// replace raw values with clean values
 	local lbl: var label `varlist'
 	drop `varlist'
-	generate `varlist' = `code'
+	qui gen `varlist' = `code'
 	label var `varlist' "`lbl'"
 
 	// label values
