@@ -7,7 +7,7 @@
 capture program drop encodefrom
 
 program define encodefrom, nclass
-	syntax varname using/, 	filetype(string) raw(string) clean(string) label(string) ///
+	syntax varlist using/, 	filetype(string) raw(string) clean(string) label(string) ///
 		[delimiters(string)] [sheet(string)]  ///
 		[label_name(string)] ///
 		[noallow_missing] [CASEignore]
@@ -24,9 +24,11 @@ program define encodefrom, nclass
 	display ""
 	display "encoding `varlist' from `using'... "
 	display ""
-	
+
+foreach v of varlist `varlist' {
+
 	// determine if varlist is string or number
-	cap confirm numeric variable `varlist' 
+	cap confirm numeric variable `v' 
 	local type_string_raw = _rc
 	
 	// preserve the existing data
@@ -65,23 +67,23 @@ program define encodefrom, nclass
 	keep `clean' `raw' `label'
 	
 		// allow for raw and (label or clean) to be same spreadsheet column
-		foreach v in label clean { 
-			if "``v''" == "`raw'" {
-				tempvar `v'
-				gen ``v'' = `raw'
+		foreach x in label clean { 
+			if "``x''" == "`raw'" {
+				tempvar `x'
+				gen ``x'' = `raw'
 			}
 		}
 
 	// if no label name specified, default to variable name
 	if "`label_name'" == "" {
-		local label_name `varlist'
+		local label_name `v'
 	}
 
 	//  determine if potential values are string or numeric
 	cap confirm numeric variable `raw'
 	local type_string_pot = _rc
 
-	// make `raw' string or not depending on `varlist' format, and reduce to 
+	// make `raw' string or not depending on `v' format, and reduce to 
 	// unique combinations of raw, clean, and label values 
 	if `type_string_raw' | `type_string_pot'  {
 		qui tostring `raw', replace usedisplayformat 
@@ -99,8 +101,8 @@ program define encodefrom, nclass
 	drop `clean' `label'
 
 	// save matched codes data set
-	if "`raw'" != "`varlist'" {
-		rename  `raw' `varlist'	
+	if "`raw'" != "`v'" {
+		rename  `raw' `v'	
 	}
 
 	tempfile codes
@@ -141,37 +143,37 @@ program define encodefrom, nclass
 
 	// make raw values string if potential values are strings
 	if `type_string_raw' | `type_string_pot' {
-		qui tostring `varlist', replace usedisplayformat
+		qui tostring `v', replace usedisplayformat
 		if "`caseignore'" == "caseignore" {
-			qui replace `varlist' = lower(`varlist')
+			qui replace `v' = lower(`v')
 			}
 	}
 
 	// merge with clean values
-	qui merge m:1 `varlist' using `codes', keep(master match) keepusing(`code') gen(`merge')
+	qui merge m:1 `v' using `codes', keep(master match) keepusing(`code') gen(`merge')
 
 	// verify that all raw values could be found in the provided spreadsheet
-	cap assert (`merge' != 1 | missing(`varlist'))
+	cap assert (`merge' != 1 | missing(`v'))
 	if _rc {
 		display as error `"The function call was "encodefrom `0'" "'
-		display as error "The following values for `varlist' were not found in the supporting spreadsheet:"
-		tab `varlist' if (`merge' == 1)
+		display as error "The following values for `v' were not found in the supporting spreadsheet:"
+		tab `v' if (`merge' == 1)
 		exit _rc
 	}	
 		
 	// verify that all raw values have found a non-missing clean value unless allow_missing is specified
-	cap assert !missing(`code') if !missing(`varlist')
+	cap assert !missing(`code') if !missing(`v')
 	if _rc & "`allow_missing'" == "noallow_missing" {
-		display as error "The following raw values for `varlist' must be mapped to non-missing clean values:" 
-		tab `varlist' if missing(`code')
+		display as error "The following raw values for `v' must be mapped to non-missing clean values:" 
+		tab `v' if missing(`code')
 		exit _rc
 	}
 
 	// replace raw values with clean values
-	local lbl: var label `varlist'
-	drop `varlist'
-	generate `varlist' = `code'
-	label var `varlist' "`lbl'"
+	local lbl: var label `v'
+	drop `v'
+	generate `v' = `code'
+	label var `v' "`lbl'"
 
 	// label values
 	cap label drop `label_name'
@@ -179,13 +181,14 @@ program define encodefrom, nclass
 	foreach x of local codes_clean {
 		label define `label_name' `x' "`label_`x''", modify
 	}	
-	label values `varlist' `label_name'
+	label values `v' `label_name'
 	drop `merge' `code' 
 	
 	// tab new codes
-	qui compress `varlist'
-	tab `varlist', missing
+	qui compress `v'
+	tab `v', missing
 	di ""
+}
 
 end	
 

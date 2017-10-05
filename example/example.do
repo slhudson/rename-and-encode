@@ -3,7 +3,7 @@ clear all
 set more off
 
 // directories and file names
-local root 		"/Users/slhudson/Dropbox (MIT)/Research/Software/renameencode"
+local root 		"C:/Users/kbp2w/Box Sync/Sally/North Carolina/encodefrom"
 local input 	"`root'/example/input"
 local output 	"`root'/example/output"
 local variables "`input'/variables.xlsx"
