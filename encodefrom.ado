@@ -52,7 +52,7 @@ program define encodefrom, nclass
 		qui import excel `"`using'"', sheet(`sheet') firstrow clear
 	}
 	else if "`filetype'" == "delimited" {
-		qui insheet `"`using'"', delimiter("`delimiters'") names case clear
+		qui insheet using `"`using'"', delimiter("`delimiters'") names case clear
 	}
 	else if "`filetype'" == "stata" {
 		qui use `"`using'"', clear
